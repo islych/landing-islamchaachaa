@@ -1,0 +1,698 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Islam Chaachaa | Création de Sites Web | تصميم مواقع الويب</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500&family=Noto+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --rose-poudre: #f8d7da;
+            --beige-clair: #f9f1e9;
+            --blanc-casse: #fafafa;
+            --lavande: #d9d2e9;
+            --vert-sage: #c5d5cb;
+            --gold: #e6c79c;
+            --vieux-rose: #d4a5a5;
+            --texte-fonce: #5a4a42;
+            --texte-clair: #7d6e6e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--beige-clair);
+            color: var(--texte-fonce);
+            line-height: 1.7;
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Effets floraux et formes organiques */
+        .floral-decoration {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 15 Q60 10 70 15 Q75 25 65 30 Q70 40 60 45 Q50 40 40 45 Q30 40 35 30 Q25 25 30 15 Q40 10 50 15 Z" fill="%23d4a5a5" opacity="0.2"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            z-index: 1;
+            opacity: 0.4;
+        }
+
+        .floral-1 {
+            top: 10%;
+            left: 5%;
+            transform: rotate(20deg);
+        }
+
+        .floral-2 {
+            top: 30%;
+            right: 8%;
+            transform: rotate(-15deg) scale(0.8);
+        }
+
+        .floral-3 {
+            bottom: 15%;
+            left: 10%;
+            transform: rotate(45deg) scale(0.6);
+        }
+
+        .floral-4 {
+            bottom: 25%;
+            right: 15%;
+            transform: rotate(-30deg) scale(0.7);
+        }
+
+        /* Header élégant avec effet de vague douce */
+        header {
+            background: linear-gradient(135deg, var(--rose-poudre), var(--lavande));
+            color: var(--texte-fonce);
+            text-align: center;
+            padding: 6rem 1rem 8rem;
+            position: relative;
+            overflow: hidden;
+            clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+        }
+
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1200 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".15" fill="%23f9f1e9"/></svg>');
+            background-size: cover;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.2rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            line-height: 1.2;
+            color: var(--texte-fonce);
+        }
+
+        h1 span {
+            display: block;
+            font-size: 1.5rem;
+            margin-top: 1.5rem;
+            font-weight: 400;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            margin: 2rem auto 0;
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 1.2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            color: var(--texte-clair);
+            font-style: italic;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: -5rem auto 0;
+            padding: 0 1.5rem 3rem;
+            position: relative;
+            z-index: 20;
+        }
+
+        /* Cartes élégantes avec coins arrondis */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .card {
+            background: var(--blanc-casse);
+            padding: 2.5rem 2rem;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: transform 0.4s, box-shadow 0.4s;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--vieux-rose), var(--gold));
+            border-radius: 25px 25px 0 0;
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: var(--texte-fonce);
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+        }
+
+        h2 i {
+            margin-right: 0.8rem;
+            color: var(--vieux-rose);
+            background: rgba(212, 165, 165, 0.15);
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .bilingual {
+            display: flex;
+            justify-content: space-between;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .bilingual div {
+            width: 48%;
+        }
+
+        .bilingual .ar {
+            text-align: right;
+            direction: rtl;
+            font-family: 'Noto Sans Arabic', sans-serif;
+            font-weight: 500;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 1.5rem;
+        }
+
+        ul li {
+            padding: 0.8rem 0;
+            position: relative;
+            transition: transform 0.3s;
+            display: flex;
+            align-items: center;
+        }
+
+        ul li:hover {
+            transform: translateX(8px);
+        }
+
+        ul li::before {
+            content: '•';
+            color: var(--vieux-rose);
+            position: absolute;
+            left: -1.2rem;
+            font-size: 1.8rem;
+        }
+
+        .ar ul {
+            padding-right: 1.5rem;
+        }
+
+        .ar ul li:hover {
+            transform: translateX(-8px);
+        }
+
+        .ar ul li::before {
+            content: '•';
+            right: -1.2rem;
+            left: auto;
+        }
+
+        .icon-list i {
+            margin-right: 0.8rem;
+            color: var(--vieux-rose);
+            font-size: 1.2rem;
+            min-width: 25px;
+        }
+
+        .ar .icon-list i {
+            margin-right: 0;
+            margin-left: 0.8rem;
+        }
+
+        /* Section CTA élégante */
+        .cta-section {
+            background: linear-gradient(135deg, var(--lavande), var(--rose-poudre));
+            border-radius: 25px;
+            padding: 4rem 2rem;
+            text-align: center;
+            color: var(--texte-fonce);
+            margin: 4rem 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(30deg);
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--vieux-rose);
+            color: var(--blanc-casse);
+            padding: 1.2rem 2.8rem;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            margin: 1.5rem 0.5rem;
+            font-size: 1.1rem;
+            border: 2px solid transparent;
+            position: relative;
+            z-index: 10;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            background: #c98f8f;
+        }
+
+        .portfolio-btn {
+            background: transparent;
+            border: 2px solid var(--vieux-rose);
+            color: var(--texte-fonce);
+        }
+
+        .portfolio-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .note {
+            background: var(--blanc-casse);
+            border-radius: 25px;
+            padding: 2.5rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.03);
+            text-align: center;
+            margin-top: 2rem;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .note p {
+            font-size: 1rem;
+            color: var(--texte-clair);
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        .portfolio-link {
+            color: var(--vieux-rose);
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dotted var(--vieux-rose);
+            transition: all 0.3s;
+            padding-bottom: 2px;
+            display: inline-block;
+            margin-top: 0.8rem;
+        }
+
+        .portfolio-link:hover {
+            color: #b37a7a;
+            border-bottom: 1px solid #b37a7a;
+        }
+
+        /* Footer élégant */
+        footer {
+            background: linear-gradient(135deg, var(--rose-poudre), #f0c8cb);
+            color: var(--texte-fonce);
+            text-align: center;
+            padding: 5rem 1rem 4rem;
+            position: relative;
+            width: 100%;
+            clip-path: polygon(0 15%, 100% 0, 100% 100%, 0 100%);
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem 1.5rem;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 50px;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+        }
+
+        .contact-item:hover {
+            background: rgba(255, 255, 255, 0.6);
+            transform: translateY(-3px);
+        }
+
+        .contact-item i {
+            font-size: 1.3rem;
+            color: var(--vieux-rose);
+        }
+
+        footer a {
+            color: var(--texte-fonce);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        footer a:hover {
+            color: var(--vieux-rose);
+            text-decoration: underline;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.4rem;
+            }
+
+            h1 span {
+                font-size: 1.2rem;
+            }
+
+            h2 {
+                font-size: 1.8rem;
+            }
+
+            .bilingual {
+                flex-direction: column;
+            }
+
+            .bilingual div {
+                width: 100%;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-button {
+                padding: 1.1rem 2rem;
+                font-size: 1rem;
+                display: block;
+                width: 100%;
+                margin: 1rem 0;
+            }
+
+            .portfolio-btn {
+                margin-left: 0;
+                margin-top: 0.5rem;
+            }
+
+            .contact-info {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            header {
+                padding: 4rem 1rem 6rem;
+                clip-path: polygon(0 0, 100% 0, 100% 95%, 0 100%);
+            }
+
+            footer {
+                clip-path: polygon(0 8%, 100% 0, 100% 100%, 0 100%);
+                padding: 4rem 1rem 3rem;
+            }
+
+            .floral-decoration {
+                display: none;
+            }
+        }
+
+        .values {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin: 2.5rem 0 4rem;
+        }
+
+        .value-item {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 20px;
+            width: 280px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+        }
+
+        .value-item:hover {
+            transform: translateY(-8px);
+        }
+
+        .value-icon {
+            font-size: 2.5rem;
+            color: var(--vieux-rose);
+            margin-bottom: 1rem;
+        }
+
+        .value-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.8rem;
+            color: var(--vieux-rose);
+        }
+
+        .value-description {
+            font-size: 1rem;
+            color: var(--texte-clair);
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <!-- Décorations florales discrètes -->
+    <div class="floral-decoration floral-1"></div>
+    <div class="floral-decoration floral-2"></div>
+    <div class="floral-decoration floral-3"></div>
+    <div class="floral-decoration floral-4"></div>
+
+    <header>
+        <div class="hero-content">
+            <h1>
+                Création de sites web<br>personnalisés et élégants
+                <span>تصميم مواقع ويب شخصية وأنيقة</span>
+            </h1>
+            <div class="tagline">
+                Développeuse web passionnée - Des sites uniques pour votre projet
+            </div>
+        </div>
+        <div class="wave"></div>
+    </header>
+
+    <div class="container">
+        <div class="values">
+            <div class="value-item">
+                <div class="value-icon"><i class="fas fa-hand-holding-heart"></i></div>
+                <h3 class="value-title">Approche Personnalisée</h3>
+                <p class="value-description">Chaque site est créé sur mesure pour répondre à vos besoins spécifiques et refléter votre identité.</p>
+            </div>
+            
+            <div class="value-item">
+                <div class="value-icon"><i class="fas fa-palette"></i></div>
+                <h3 class="value-title">Design Élégant</h3>
+                <p class="value-description">Des interfaces raffinées et féminines qui captivent vos visiteurs et valorisent votre contenu.</p>
+            </div>
+            
+            <div class="value-item">
+                <div class="value-icon"><i class="fas fa-lock"></i></div>
+                <h3 class="value-title">Transparence</h3>
+                <p class="value-description">Une relation de confiance avec des tarifs clairs et un processus de travail transparent.</p>
+            </div>
+        </div>
+
+        <div class="card-grid">
+            <div class="card">
+                <h2><i class="fas fa-user-circle"></i> À propos de moi | عني</h2>
+                <div class="bilingual">
+                    <div class="fr">
+                        <p>Je suis Islam Chaachaa, une développeuse web passionnée par la création de sites élégants et fonctionnels. En tant que débutante motivée, je mets tout mon cœur dans chaque projet pour créer des sites web qui vous ressemblent.</p>
+                        <p>Mon approche est basée sur l'écoute et la collaboration pour transformer vos idées en réalité numérique.</p>
+                        <p>Découvrez mon univers créatif :</p>
+                        <a href="https://islych.github.io/portfolio/" class="portfolio-link" target="_blank">Voir mon portfolio</a>
+                    </div>
+                    <div class="ar">
+                        <p>أنا إسلام شعشاع، مطورة ويب شغوفة بإنشاء مواقع أنيقة وعملية. كمبتدئة متحمسة، أضع كل قلبي في كل مشروع لإنشاء مواقع ويب تعكس شخصيتك.</p>
+                        <p>نهجي قائم على الاستماع والتعاون لتحويل أفكارك إلى واقع رقمي.</p>
+                        <p>اكتشف عالمي الإبداعي:</p>
+                        <a href="https://islych.github.io/portfolio/" class="portfolio-link" target="_blank">معرض أعمالي</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2><i class="fas fa-laptop-code"></i> Mes services | خدماتي</h2>
+                <div class="bilingual">
+                    <div class="fr">
+                        <ul class="icon-list">
+                            <li><i class="fas fa-paint-brush"></i> Design de sites personnalisés</li>
+                            <li><i class="fas fa-briefcase"></i> Sites vitrines professionnels</li>
+                            <li><i class="fas fa-blog"></i> Sites de présentation</li>
+                            <li><i class="fas fa-sync-alt"></i> Mises à jour de contenu</li>
+                            <li><i class="fas fa-mobile-alt"></i> Design responsive</li>
+                            <li><i class="fas fa-lightbulb"></i> Conseils personnalisés</li>
+                        </ul>
+                    </div>
+                    <div class="ar">
+                        <ul class="icon-list">
+                            <li><i class="fas fa-paint-brush"></i> تصميم مواقع شخصية</li>
+                            <li><i class="fas fa-briefcase"></i> مواقع عرض احترافية</li>
+                            <li><i class="fas fa-blog"></i> مواقع تقديمية</li>
+                            <li><i class="fas fa-sync-alt"></i> تحديث المحتوى</li>
+                            <li><i class="fas fa-mobile-alt"></i> تصميم متجاوب</li>
+                            <li><i class="fas fa-lightbulb"></i> نصائح شخصية</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <h2>Prêt(e) pour un site web qui vous ressemble ? | هل أنت جاهز(ة) لموقع يعكس شخصيتك؟</h2>
+            <p>Discutons de votre projet unique</p>
+            
+            <a href="https://wa.me/212718002716?text=Bonjour%2C%20je%20souhaite%20un%20site%20web%20personnalisé" class="cta-button" target="_blank">
+                <i class="fab fa-whatsapp"></i> Contact WhatsApp
+            </a>
+            
+            <a href="https://islych.github.io/portfolio/" class="cta-button portfolio-btn" target="_blank">
+                <i class="fas fa-heart"></i> Voir mon portfolio
+            </a>
+        </div>
+
+        <div class="note">
+            <div class="bilingual">
+                <div class="fr">
+                    <p><strong>Processus clair :</strong> Nous commençons par un échange pour comprendre vos besoins. Un acompte de 30% est requis pour démarrer. Vous bénéficiez de 2 révisions incluses pour perfectionner votre site.</p>
+                </div>
+                <div class="ar">
+                    <p><strong>عملية واضحة:</strong> نبدأ بتبادل لفهم احتياجاتك. يتطلب دفع عربون بنسبة 30% للبدء. ستستفيد من مراجعتين مدرجتين لتحسين موقعك.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <h2>Contactez-moi | تواصلوا معي</h2>
+            
+            <div class="contact-info">
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <a href="mailto:islamchaachaa20040705@gmail.com">islamchaachaa20040705@gmail.com</a>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-phone-alt"></i>
+                    <a href="tel:+212718002716">+212 718002716</a>
+                </div>
+            </div>
+            
+            <p style="margin-top: 2rem; color: var(--texte-clair); font-size: 0.9rem;">
+                &copy; 2023 Islam Chaachaa - Création de sites web personnalisés
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
